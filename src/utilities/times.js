@@ -1,3 +1,5 @@
+import { signInWithGoogle, signOutWithGoogle, useUserState} from "./firebase";
+
 export const toggle = (x, lst) => (
   lst.includes(x) ? lst.filter(y => x !== y) : [x, ...lst]
 )
@@ -51,13 +53,35 @@ export const courseConflict = (course1, course2) => (
   && timeConflict(course1, course2)
 );
 
-export const TermSelector = ({term, setTerm}) => (
-  <div className="btn-group">
-  {
-    Object.values(terms).map(value => <TermButton key={value} term={value} setTerm={setTerm} checked={value === term}/>)
-  }
-  </div>
-)
+const SignInButton = () => (
+  <button className="btn btn-secondary btn-sm"
+      onClick={() => signInWithGoogle()}>
+    Sign In
+  </button>
+);
+
+const SignOutButton = () => (
+  <button className="btn btn-secondary btn-sm"
+      onClick={() => signOutWithGoogle()}>
+    Sign Out
+  </button>
+);
+
+export const TermSelector = ({term, setTerm}) => {
+  const [user] = useUserState();
+  return (
+    <div className="btn-toolbar justify-content-between">
+      
+      <div className="btn-group">
+        {
+          Object.values(terms).map(value => <TermButton key={value} term={value} setTerm={setTerm} checked={value === term}/>)
+        }
+      </div>
+
+      { user ? <SignOutButton /> : <SignInButton /> }
+    </div>  
+  )
+}
 
 export const TermButton = ({term, setTerm, checked}) => (
   <>
